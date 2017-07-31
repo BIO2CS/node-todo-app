@@ -1,9 +1,11 @@
 var mongoose = require("mongoose");
 
-const url = "mongodb://localhost:27017/TodoApp";
+const localUrl = "mongodb://localhost:27017/TodoApp";
+
+const mlabUrl = "mongodb://hgu29:anhui14004@ds127783.mlab.com:27783/hgu-node-todo-app";
 
 mongoose.Promise = global.Promise;
-mongoose.connect(url);
+mongoose.connect(mlabUrl || localUrl);
 
 module.exports = {
   mongoose
