@@ -1,6 +1,7 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 const { ObjectID } = require("mongodb");
+const pick = require("lodash/pick");
 
 const { mongoose } = require("./db/mongoose");
 const Todo = require("./models/todos");
@@ -57,6 +58,18 @@ app.delete("/todos/:id", (req, res) => {
       return res.status(404).send();
     }
     res.send(todo);
+  }).catch(err => {
+    res.status(400).send(err);
+  });
+});
+
+app.post("/users", (req, res) => {
+  const body = pick(req.body, ["email", "password"]);
+  var user = new User(body);
+  user.save().then(() => {
+    return user.generateAuthToken();
+  }).then(token => {
+    res.header("x-auth", token).send(user);
   }).catch(err => {
     res.status(400).send(err);
   });
