@@ -64,9 +64,6 @@ UserSchema.statics.findByToken = function(token) {
     decoded = jwt.decode(token, "abc123");
     console.log("decoded id", decoded._id);
   } catch (error) {
-    // return new Promise((resolve, reject) => {
-    //   reject();
-    // });
     return Promise.reject("failed to find the user with token", token);
   }
 
@@ -76,6 +73,24 @@ UserSchema.statics.findByToken = function(token) {
     "tokens.access": "auth"
   });
 };
+
+UserSchema.statics.findByCredentials = function(email, password) {
+  var User = this;
+  return User.findOne({email}).then(user => {
+    if (!user) {
+      return Promise.reject();
+    }
+    return new Promise((resolve, reject) => {
+      bcrypt.compare(password, user.password, (err, result) => {
+        if (result) {
+          resolve(user);
+        } else {
+          reject();
+        }
+      });
+    });
+  });
+}
 
 UserSchema.pre("save", function(next) {
   var user = this;
